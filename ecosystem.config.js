@@ -10,9 +10,11 @@ module.exports = {
       max_memory_restart: '512M',
       env: {
         NODE_ENV: 'development',
+        DATABASE_URL: 'file:../../external-db/dev.sqlite',
       },
       env_production: {
         NODE_ENV: 'production',
+        DATABASE_URL: 'file:../../external-db/prod.sqlite',
       },
     },
   ],
