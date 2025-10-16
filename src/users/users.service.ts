@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   findByPhone(phone: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { phone } });
@@ -18,7 +18,6 @@ export class UsersService {
       where: { id: userId },
       select: { dailyCalorieLimit: true },
     });
-
   }
 
   updateCalorieLimit(userId: string, value: number) {
@@ -26,15 +25,14 @@ export class UsersService {
       where: { id: userId },
       data: { dailyCalorieLimit: value },
       select: { dailyCalorieLimit: true },
-    })
+    });
   }
-
 
   getDesiredWeight(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
       select: { desiredWeight: true },
-    })
+    });
   }
 
   updateDesiredWeight(userId: string, value: number) {
@@ -42,6 +40,6 @@ export class UsersService {
       where: { id: userId },
       data: { desiredWeight: value },
       select: { desiredWeight: true },
-    })
+    });
   }
 }

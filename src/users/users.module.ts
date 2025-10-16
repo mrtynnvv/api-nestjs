@@ -5,9 +5,9 @@ import { PassportModule } from '@nestjs/passport';
 import { UsersController } from '../users/users.controller';
 
 @Module({
-    imports: [PassportModule],
-    controllers: [UsersController],
-    providers: [UsersService],
-    exports: [UsersService],
+  imports: [PassportModule],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}
