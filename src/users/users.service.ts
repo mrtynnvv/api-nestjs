@@ -28,4 +28,20 @@ export class UsersService {
       select: { dailyCalorieLimit: true },
     })
   }
+
+
+  getDesiredWeight(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { desiredWeight: true },
+    })
+  }
+
+  updateDesiredWeight(userId: string, value: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { desiredWeight: value },
+      select: { desiredWeight: true },
+    })
+  }
 }
