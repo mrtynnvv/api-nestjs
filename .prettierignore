@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+prisma/migrations/
+*.sqlite
+*.sqlite-* 
+
+# Build outputs / caches
+.turbo/
+.next/
+out/
+build/
+
+# Logs
+*.log
+logs/
