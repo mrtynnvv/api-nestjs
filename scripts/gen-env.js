@@ -31,4 +31,3 @@ try {
   console.error('Error generating .env:', err.message);
   process.exit(1);
 }
-
