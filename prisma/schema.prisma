@@ -16,14 +16,27 @@ model User {
   dailyCalorieLimit Int?
   desiredWeight     Int?
   weights           WeightEntry[]
+  foodEntries       FoodEntry[]
 }
 
 model WeightEntry {
   id         String   @id @default(cuid())
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  measuredAt DateTime @default(now()) //когда взвешивался
+  measuredAt DateTime @default(now()) //когда взвешивался (серверное время)
   weight     Float //значение веса кг
 
   @@index([userId, measuredAt])
+}
+
+model FoodEntry {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eatenAt  DateTime @default(now()) //когда добавлен прием пищи (серверное время)
+  title    String
+  calories Int
+  grams    Int
+
+  @@index([userId, eatenAt])
 }

@@ -12,6 +12,7 @@ import { UpdateCalorieLimitDto } from './dto/update-calorie-limit.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateDesiredWeightDto } from './dto/update-desired-weight.dto';
 import { CreateWeightDto } from './dto/create-weight.dto';
+import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
@@ -45,5 +46,15 @@ export class UsersController {
   @Get('me/weights')
   listMyWeights(@Req() req: any) {
     return this.users.listWeights(req.user.id);
+  }
+
+  @Post('me/foods')
+  addMyFood(@Req() req: any, @Body() dto: CreateFoodEntryDto) {
+    return this.users.addFoodEntry(req.user.id, dto);
+  }
+
+  @Get('me/foods')
+  listMyFood(@Req() req: any) {
+    return this.users.listFoodEntry(req.user.id);
   }
 }

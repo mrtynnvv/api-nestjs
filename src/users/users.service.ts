@@ -6,6 +6,8 @@ import { User } from '@prisma/client';
 
 import { CreateWeightDto } from './dto/create-weight.dto';
 
+import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -80,5 +82,25 @@ export class UsersService {
       items: truncated ? items.slice(0, MAX_WEIGHTS) : items,
       truncated,
     };
+  }
+
+  async addFoodEntry(userId: string, dto: CreateFoodEntryDto) {
+    // создает запись в таблице foodEntry
+    return this.prisma.foodEntry.create({
+      data: {
+        userId,
+        title: dto.title,
+        calories: dto.calories,
+        grams: dto.grams,
+      },
+    });
+  }
+
+  async listFoodEntry(userId: string) {
+    // запрашивает из бд все записи еды юзера, сортирует по eatenAt
+    return this.prisma.foodEntry.findMany({
+      where: { userId },
+      orderBy: { eatenAt: 'asc' },
+    });
   }
 }
