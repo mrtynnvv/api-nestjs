@@ -13,7 +13,7 @@ async function bootstrap() {
       'https://calorielly.ru',
     ],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorisation'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
     maxAge: 86400,
   });
