@@ -10,7 +10,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'http://127.0.0.1:5173',
       'https://mrtynnvv.ru',
-      'https://calorielly.ru',
+      'https://calorielly.tech',
     ],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
