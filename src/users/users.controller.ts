@@ -53,8 +53,8 @@ export class UsersController {
     return this.users.addFoodEntry(req.user.id, dto);
   }
 
-  @Get('me/foods')
+  @Get('me/timeline')
   listMyFood(@Req() req: any) {
-    return this.users.listFoodEntry(req.user.id);
+    return this.users.listEntries(req.user.id);
   }
 }
