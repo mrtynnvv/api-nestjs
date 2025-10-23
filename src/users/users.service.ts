@@ -10,7 +10,7 @@ import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   findByPhone(phone: string): Promise<User | null> {
     // ищет в таблице user уникальную запись по полю phone
@@ -95,35 +95,38 @@ export class UsersService {
       },
     });
   }
-
+  async listFoodEntry(userId: string) {
+    // запрашивает из бд все записи еды юзера, сортирует по eatenAt
+    return this.prisma.foodEntry.findMany({
+      where: { userId },
+      orderBy: { eatenAt: 'asc' },
+    });
+  }
   async listEntries(userId: string) {
     // запрашивает из бд все записи еды и веса юзера и сортирует их по дате
     const [foods, weights] = await this.prisma.$transaction([
       this.prisma.foodEntry.findMany({
         where: { userId },
-        orderBy: { eatenAt: 'desc' }
+        orderBy: { eatenAt: 'desc' },
       }),
       this.prisma.weightEntry.findMany({
         where: { userId },
-        orderBy: { measuredAt: 'desc' }
+        orderBy: { measuredAt: 'desc' },
       }),
-    ])
-   return [
-    ...foods.map(f =>({
-      id: f.id,
-      type: 'food' as const,
-      date: f.eatenAt,
-      data: f,
-    })),
-    ...weights.map(w => ({
-      id: w.id,
-      type: 'weight' as const,
-      date: w.measuredAt,
-      data: w,
-    })),
-
-
-   ].sort((a, b) => b.date.getTime() - a.date.getTime());
-
+    ]);
+    return [
+      ...foods.map((f) => ({
+        id: f.id,
+        type: 'food' as const,
+        date: f.eatenAt,
+        data: f,
+      })),
+      ...weights.map((w) => ({
+        id: w.id,
+        type: 'weight' as const,
+        date: w.measuredAt,
+        data: w,
+      })),
+    ].sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 }
