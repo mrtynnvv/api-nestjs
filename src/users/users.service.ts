@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -10,7 +10,7 @@ import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findByPhone(phone: string): Promise<User | null> {
     // ищет в таблице user уникальную запись по полю phone
@@ -128,5 +128,14 @@ export class UsersService {
         data: w,
       })),
     ].sort((a, b) => b.date.getTime() - a.date.getTime());
+  }
+//удаляет записи из списков веса или еды по id
+  async deleteEntryById(userId: string, id: string) {
+    const [f, w] = await this.prisma.$transaction([
+      this.prisma.foodEntry.deleteMany({ where: { id, userId } }),
+      this.prisma.weightEntry.deleteMany({ where: { id, userId } }),
+
+    ])
+    if (!f.count && !w.count) throw new NotFoundException('ENTRY_NOT_FOUND')
   }
 }

@@ -6,6 +6,9 @@ import {
   UseGuards,
   Req,
   Post,
+  Delete,
+  Param,
+  HttpCode
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateCalorieLimitDto } from './dto/update-calorie-limit.dto';
@@ -17,7 +20,7 @@ import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
 export class UsersController {
-  constructor(private readonly users: UsersService) {}
+  constructor(private readonly users: UsersService) { }
 
   @Get('me/calorie-limit')
   getMyCalorieLimit(@Req() req: any) {
@@ -61,5 +64,11 @@ export class UsersController {
   @Get('me/timeline')
   listMyEntries(@Req() req: any) {
     return this.users.listEntries(req.user.id);
+  }
+
+  @Delete('me/entries/:id')
+  @HttpCode(204)
+  async deleteMyEntry(@Req() req: any, @Param('id') id: string) {
+    await this.users.deleteEntryById(req.user.id, id);
   }
 }
