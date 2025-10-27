@@ -8,7 +8,7 @@ import {
   Post,
   Delete,
   Param,
-  HttpCode
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateCalorieLimitDto } from './dto/update-calorie-limit.dto';
@@ -20,7 +20,7 @@ import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
 export class UsersController {
-  constructor(private readonly users: UsersService) { }
+  constructor(private readonly users: UsersService) {}
 
   @Get('me/calorie-limit')
   getMyCalorieLimit(@Req() req: any) {
@@ -70,5 +70,15 @@ export class UsersController {
   @HttpCode(204)
   async deleteMyEntry(@Req() req: any, @Param('id') id: string) {
     await this.users.deleteEntryById(req.user.id, id);
+  }
+
+  @Post('me/favorites')
+  addMyFavorites(@Req() req: any, @Body() dto: CreateFoodEntryDto) {
+    return this.users.addFavoriteFood(req.user.id, dto);
+  }
+
+  @Get('me/favorites')
+  listMyFavorites(@Req() req: any) {
+    return this.users.listFavoriteFoods(req.user.id);
   }
 }

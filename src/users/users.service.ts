@@ -10,7 +10,7 @@ import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   findByPhone(phone: string): Promise<User | null> {
     // ищет в таблице user уникальную запись по полю phone
@@ -129,13 +129,32 @@ export class UsersService {
       })),
     ].sort((a, b) => b.date.getTime() - a.date.getTime());
   }
-//удаляет записи из списков веса или еды по id
+  //удаляет записи из списков веса или еды по id
   async deleteEntryById(userId: string, id: string) {
-    const [f, w] = await this.prisma.$transaction([
+    const [f, w, ff] = await this.prisma.$transaction([
       this.prisma.foodEntry.deleteMany({ where: { id, userId } }),
       this.prisma.weightEntry.deleteMany({ where: { id, userId } }),
+      this.prisma.favoriteFood.deleteMany({ where: { id, userId } }),
+    ]);
+    if (!f.count && !w.count && !ff.count)
+      throw new NotFoundException('ENTRY_NOT_FOUND');
+  }
 
-    ])
-    if (!f.count && !w.count) throw new NotFoundException('ENTRY_NOT_FOUND')
+  async addFavoriteFood(userId: string, dto: CreateFoodEntryDto) {
+    // создает запись в таблице favoriteFoods
+    return this.prisma.favoriteFood.create({
+      data: {
+        userId,
+        title: dto.title,
+        calories: dto.calories,
+        grams: dto.grams,
+      },
+    });
+  }
+  async listFavoriteFoods(userId: string) {
+    // запрашивает из бд все записи избранной еды юзера
+    return this.prisma.favoriteFood.findMany({
+      where: { userId },
+    });
   }
 }
