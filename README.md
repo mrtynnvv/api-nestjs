@@ -1,24 +1,7 @@
-Описание в README репозитория фронтенд-части проекта: https://github.com/mrtynnvv/Calorielly
 
-
-
- <p align="center">
-
-  <img height="300"  src="./mockups/iphone.png"/>
-
-  <img height="300"  src="./mockups/mac.png"/>
-
-</p>
-
+<h1 align="center">api-nestjs</h1>
 <p align="center">
   <i>Frontend репозиторий: <a href="https://github.com/mrtynnvv/Calorielly">github.com/calorielly</a> </i>
-</p>
-<h1 align="center">api-nestjs</h1>
-
-<p align="center">
-  <a href="https://github.com/Dexone/api-nestjs/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Dexone/api-nestjs?style=flat" />
-  </a>
 </p>
 
 ## 💡 Архитектура и стек
