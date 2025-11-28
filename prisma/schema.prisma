@@ -37,7 +37,6 @@ model FoodEntry {
   eatenAt  DateTime @default(now()) //когда добавлен прием пищи (серверное время)
   title    String
   calories Int
-  grams    Int
 
   @@index([userId, eatenAt])
 }
@@ -48,7 +47,6 @@ model FavoriteFood {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   title    String
   calories Int
-  grams    Int
 
   @@index([userId])
 }

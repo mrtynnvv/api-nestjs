@@ -91,7 +91,6 @@ export class UsersService {
         userId,
         title: dto.title,
         calories: dto.calories,
-        grams: dto.grams,
       },
     });
   }
@@ -147,7 +146,6 @@ export class UsersService {
         userId,
         title: dto.title,
         calories: dto.calories,
-        grams: dto.grams,
       },
     });
   }

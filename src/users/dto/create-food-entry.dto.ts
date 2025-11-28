@@ -10,9 +10,4 @@ export class CreateFoodEntryDto {
   @IsInt()
   @Min(0)
   calories: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  grams: number;
 }
