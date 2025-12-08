@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum DayOfWeek {
+  Mon
+  Tue
+  Wed
+  Thu
+  Fri
+  Sat
+  Sun
+}
+
 model User {
   id                String         @id @default(cuid())
   phone             String         @unique
@@ -14,6 +24,7 @@ model User {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   dailyCalorieLimit Int?
+  resetDay          DayOfWeek?
   desiredWeight     Int?
   weights           WeightEntry[]
   foodEntries       FoodEntry[]

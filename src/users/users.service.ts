@@ -7,6 +7,7 @@ import { User } from '@prisma/client';
 import { CreateWeightDto } from './dto/create-weight.dto';
 
 import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
+import { DayOfWeek } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +38,25 @@ export class UsersService {
       data: { dailyCalorieLimit: value },
       // вернет только поле dailyCalorieLimit
       select: { dailyCalorieLimit: true },
+    });
+  }
+
+  getResetDay(userId: string) {
+    // ищет юзера по id и возвращает только поле resetDay
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { resetDay: true },
+    });
+  }
+
+  updateResetDay(userId: string, value: DayOfWeek) {
+    // обновляет запись юзера по id, меняет resetDay
+    return this.prisma.user.update({
+      where: { id: userId },
+      // новое значение
+      data: { resetDay: value },
+      // вернет только поле resetDay
+      select: { resetDay: true },
     });
   }
 

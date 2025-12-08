@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateCalorieLimitDto } from './dto/update-calorie-limit.dto';
+import { UpdateResetDayDto } from './dto/update-reset-day.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateDesiredWeightDto } from './dto/update-desired-weight.dto';
 import { CreateWeightDto } from './dto/create-weight.dto';
@@ -30,6 +31,16 @@ export class UsersController {
   @Patch('me/calorie-limit')
   updateMyCalorieLimit(@Req() req: any, @Body() dto: UpdateCalorieLimitDto) {
     return this.users.updateCalorieLimit(req.user.id, dto.value);
+  }
+
+  @Get('me/reset-day')
+  getResetDay(@Req() req: any) {
+    return this.users.getResetDay(req.user.id);
+  }
+
+  @Patch('me/reset-day')
+  updateResetDay(@Req() req: any, @Body() dto: UpdateResetDayDto) {
+    return this.users.updateResetDay(req.user.id, dto.value);
   }
 
   @Get('me/desired-weight')
