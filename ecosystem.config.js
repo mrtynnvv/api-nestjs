@@ -8,13 +8,12 @@ module.exports = {
       exec_mode: 'cluster',
       watch: false,
       max_memory_restart: '512M',
+      env_file: '.env',
       env: {
         NODE_ENV: 'development',
-        DATABASE_URL: 'file:../../external-db/app.sqlite',
       },
       env_production: {
         NODE_ENV: 'production',
-        DATABASE_URL: 'file:../../external-db/app.sqlite',
       },
     },
   ],
