@@ -11,7 +11,7 @@
 - Аутентификация и безопасность: JWT (`@nestjs/jwt` + `passport-jwt`), хеширование паролей через Argon2id (`argon2`), нормализация телефона, обработка ошибок через стандартные `HttpException`
 - Валидация ввода: DTO на `class-validator`/`class-transformer` + глобальный `ValidationPipe` (`whitelist`, `transform`)
 - API эндпоинты: `POST /auth/register`, `POST /auth/login`; защищённые `GET|PATCH /users/me/calorie-limit` (JWT Guard)
-- Конфигурация и окружения: переменные `.env` (`DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_ACCESS_EXPIRES`); генерация `.env` из `.env.example` (`npm run genEnv:dev` — `~/external-db/app.sqlite`, `npm run genEnv:prod` — `../../external-db/app.sqlite`)
+- Конфигурация и окружения: переменные `.env` (`DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_ACCESS_EXPIRES`); генерация `.env` из `.env.example` (`npm run genEnv:dev` — `~/external-db/app.sqlite`, `npm run genEnv:prod` — `../external-db/app.sqlite` относительно папки проекта)
 - Процессы и деплой: PM2 (`ecosystem.config.js`), разделение env для dev/prod, zero‑downtime рестарты; `start:prod` на `dist/main.js`
 
 ## 📝 Licence

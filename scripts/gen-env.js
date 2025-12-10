@@ -11,7 +11,7 @@ const mode = envTarget === 'dev' ? 'dev' : 'prod';
 
 const databasePaths = {
   dev: `file:${path.join(os.homedir(), 'external-db', 'app.sqlite').replace(/\\/g, '/')}`,
-  prod: `file:${path.join(root, '..', '..', 'external-db', 'app.sqlite').replace(/\\/g, '/')}`,
+  prod: `file:${path.join(root, '..', 'external-db', 'app.sqlite').replace(/\\/g, '/')}`,
 };
 
 const DEFAULTS = {
