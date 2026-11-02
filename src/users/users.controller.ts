@@ -17,6 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UpdateDesiredWeightDto } from './dto/update-desired-weight.dto';
 import { CreateWeightDto } from './dto/create-weight.dto';
 import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
+import { UpdateMealScheduleDto } from './dto/update-meal-schedule.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users')
@@ -31,6 +32,19 @@ export class UsersController {
   @Patch('me/calorie-limit')
   updateMyCalorieLimit(@Req() req: any, @Body() dto: UpdateCalorieLimitDto) {
     return this.users.updateCalorieLimit(req.user.id, dto.value);
+  }
+
+  @Get('me/meal-schedule')
+  getMealSchedule(@Req() req: { user: { id: string } }) {
+    return this.users.getMealSchedule(req.user.id);
+  }
+
+  @Patch('me/meal-schedule')
+  updateMealSchedule(
+    @Req() req: { user: { id: string } },
+    @Body() dto: UpdateMealScheduleDto,
+  ) {
+    return this.users.updateMealSchedule(req.user.id, dto);
   }
 
   @Get('me/reset-day')

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -8,6 +12,7 @@ import { CreateWeightDto } from './dto/create-weight.dto';
 
 import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 import { DayOfWeek } from '@prisma/client';
+import { UpdateMealScheduleDto } from './dto/update-meal-schedule.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +44,82 @@ export class UsersService {
       // вернет только поле dailyCalorieLimit
       select: { dailyCalorieLimit: true },
     });
+  }
+
+  async getMealSchedule(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        mealScheduleEnabled: true,
+        mealScheduleEntries: {
+          orderBy: { timeMinutes: 'asc' },
+          include: { favorites: true },
+        },
+      },
+    });
+    if (!user) throw new NotFoundException('USER_NOT_FOUND');
+
+    return {
+      enabled: user.mealScheduleEnabled,
+      meals: user.mealScheduleEntries.map(
+        ({ timeMinutes, calories, favorites }) => {
+          const hours = Math.floor(timeMinutes / 60)
+            .toString()
+            .padStart(2, '0');
+          const minutes = (timeMinutes % 60).toString().padStart(2, '0');
+          return {
+            time: `${hours}:${minutes}`,
+            calories,
+            favoriteIds: favorites.map(({ favoriteFoodId }) => favoriteFoodId),
+          };
+        },
+      ),
+    };
+  }
+
+  async updateMealSchedule(userId: string, dto: UpdateMealScheduleDto) {
+    await this.prisma.$transaction(async (prisma) => {
+      const favoriteIds = [
+        ...new Set(dto.meals.flatMap((meal) => meal.favoriteIds)),
+      ];
+      if (favoriteIds.length) {
+        const favorites = await prisma.favoriteFood.findMany({
+          where: { userId, id: { in: favoriteIds } },
+          select: { id: true },
+        });
+        if (favorites.length !== favoriteIds.length) {
+          throw new BadRequestException('INVALID_FAVORITES');
+        }
+      }
+
+      await prisma.mealScheduleEntry.deleteMany({ where: { userId } });
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          mealScheduleEnabled: dto.enabled,
+          mealScheduleEntries: {
+            create: dto.meals.map(({ time, calories, favoriteIds }) => {
+              const [hours, minutes] = time.split(':').map(Number);
+              return {
+                timeMinutes: hours * 60 + minutes,
+                calories,
+                favorites: {
+                  create: favoriteIds.map((favoriteFoodId) => ({
+                    favoriteFoodId,
+                  })),
+                },
+              };
+            }),
+          },
+        },
+        select: { id: true },
+      });
+    });
+
+    return {
+      enabled: dto.enabled,
+      meals: dto.meals,
+    };
   }
 
   getResetDay(userId: string) {
@@ -105,12 +186,18 @@ export class UsersService {
   }
 
   async addFoodEntry(userId: string, dto: CreateFoodEntryDto) {
+    const eatenAt =
+      dto.eatenAt === undefined ? undefined : new Date(dto.eatenAt);
+    if (eatenAt && !Number.isFinite(eatenAt.getTime())) {
+      throw new BadRequestException('INVALID_EATEN_AT');
+    }
     // создает запись в таблице foodEntry
     return this.prisma.foodEntry.create({
       data: {
         userId,
         title: dto.title,
         calories: dto.calories,
+        eatenAt,
       },
     });
   }
