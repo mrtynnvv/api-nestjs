@@ -18,17 +18,29 @@ enum DayOfWeek {
 }
 
 model User {
-  id                String         @id @default(cuid())
-  phone             String         @unique
-  passwordHash      String
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  dailyCalorieLimit Int?
-  resetDay          DayOfWeek?
-  desiredWeight     Int?
-  weights           WeightEntry[]
-  foodEntries       FoodEntry[]
-  favoriteFoods     FavoriteFood[]
+  id                  String              @id @default(cuid())
+  phone               String              @unique
+  passwordHash        String
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  dailyCalorieLimit   Int?
+  resetDay            DayOfWeek?
+  desiredWeight       Int?
+  mealScheduleEnabled Boolean             @default(false)
+  weights             WeightEntry[]
+  foodEntries         FoodEntry[]
+  favoriteFoods       FavoriteFood[]
+  mealScheduleEntries MealScheduleEntry[]
+}
+
+model MealScheduleEntry {
+  id          String @id @default(cuid())
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timeMinutes Int
+  calories    Int
+
+  @@unique([userId, timeMinutes])
 }
 
 model WeightEntry {

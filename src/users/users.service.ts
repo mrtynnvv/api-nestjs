@@ -8,6 +8,7 @@ import { CreateWeightDto } from './dto/create-weight.dto';
 
 import { CreateFoodEntryDto } from './dto/create-food-entry.dto';
 import { DayOfWeek } from '@prisma/client';
+import { UpdateMealScheduleDto } from './dto/update-meal-schedule.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +40,59 @@ export class UsersService {
       // вернет только поле dailyCalorieLimit
       select: { dailyCalorieLimit: true },
     });
+  }
+
+  async getMealSchedule(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        mealScheduleEnabled: true,
+        mealScheduleEntries: { orderBy: { timeMinutes: 'asc' } },
+      },
+    });
+    if (!user) throw new NotFoundException('USER_NOT_FOUND');
+
+    return {
+      enabled: user.mealScheduleEnabled,
+      meals: user.mealScheduleEntries.map(({ timeMinutes, calories }) => ({
+        time: `${Math.floor(timeMinutes / 60)
+          .toString()
+          .padStart(2, '0')}:${(timeMinutes % 60).toString().padStart(2, '0')}`,
+        calories,
+      })),
+    };
+  }
+
+  async updateMealSchedule(userId: string, dto: UpdateMealScheduleDto) {
+    const meals = dto.meals.map(({ time, calories }) => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return { timeMinutes: hours * 60 + minutes, calories };
+    });
+
+    const [, user] = await this.prisma.$transaction([
+      this.prisma.mealScheduleEntry.deleteMany({ where: { userId } }),
+      this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          mealScheduleEnabled: dto.enabled,
+          mealScheduleEntries: { create: meals },
+        },
+        select: {
+          mealScheduleEnabled: true,
+          mealScheduleEntries: { orderBy: { timeMinutes: 'asc' } },
+        },
+      }),
+    ]);
+
+    return {
+      enabled: user.mealScheduleEnabled,
+      meals: user.mealScheduleEntries.map(({ timeMinutes, calories }) => ({
+        time: `${Math.floor(timeMinutes / 60)
+          .toString()
+          .padStart(2, '0')}:${(timeMinutes % 60).toString().padStart(2, '0')}`,
+        calories,
+      })),
+    };
   }
 
   getResetDay(userId: string) {
